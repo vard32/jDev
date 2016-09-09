@@ -10,19 +10,16 @@
     <packaging>war</packaging>
 
     <dependencies>
-
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
         </dependency>
-
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>9.4-1205-jdbc42</version>
         </dependency>
-
     </dependencies>
 
     <build>
