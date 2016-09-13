@@ -18,20 +18,26 @@ public class MainServlet extends HttpServlet {
 
     Connection connection = null;
     ResultSet rs = null;
-    DBController db = new DBController();
+    DBController db = null;
+    Map columns = null;
 
     /* Инициализация сервлета */
     /* ------------------------------------------------------------------------------------------------------------- */
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        try {
-                /*
-                в файле /conf/context.xml (сервера Tomcat) ищется секция <Resource></> с именем name="jdbc/postgres"
-                оттуда берутся параметры подключения к БД.
-                */
-                connection = db.getConnection("java:/comp/env/jdbc/postgres");
-        } catch (Exception e) {
+        try
+        {
+           /*
+           в файле /conf/context.xml (сервера Tomcat) ищется секция <Resource></> с именем name="jdbc/postgres"
+           оттуда берутся параметры подключения к БД.
+           */
+           db = new DBController();
+           connection = db.getConnection("java:/comp/env/jdbc/postgres");
+           columns = new HashMap();
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
         }
 
@@ -52,28 +58,20 @@ public class MainServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        /*
-        Map columns = new HashMap();
-        columns.put("FirstName", request.getParameter("FirstName"));
-        columns.put("SecondName", request.getParameter("SecondName"));
-        columns.put("LastName", request.getParameter("LastName"));
-        columns.put("Receiver", request.getParameter("Receiver"));
-        columns.put("Theme", request.getParameter("Theme"));
-        columns.put("Message", request.getParameter("Message"));
+        if(connection != null){
+           columns.clear();
+           columns.put("FirstName", request.getParameter("FirstName"));
+           columns.put("SecondName", request.getParameter("SecondName"));
+           columns.put("LastName", request.getParameter("LastName"));
+           columns.put("Receiver", request.getParameter("Receiver"));
+           columns.put("Theme", request.getParameter("Theme"));
+           columns.put("Message", request.getParameter("Message"));
 
-        boolean hasConnected;
+           System.out.println("DB connected");
+           System.out.println(db.insert(connection, "mytable", columns));
 
-        DBController db = new DBController();
-        hasConnected = db.isConnected();
-
-        if(hasConnected) {
-            System.out.println("DB connected");
-            System.out.println(db.insert("mytable", columns));
+           doGet(request, response);
         }
-        else System.out.println("Connection failed!");
-
-        doGet(request, response);
-        */
     }
 
 }
