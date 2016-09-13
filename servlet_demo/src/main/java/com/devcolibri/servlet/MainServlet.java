@@ -17,14 +17,19 @@ import java.util.Map;
 public class MainServlet extends HttpServlet {
 
     Connection connection = null;
+    ResultSet rs = null;
+    DBController db = new DBController();
 
+    /* Инициализация сервлета */
     /* ------------------------------------------------------------------------------------------------------------- */
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-
-        DBController db = new DBController();
         try {
+                /*
+                в файле /conf/context.xml (сервера Tomcat) ищется секция <Resource></> с именем name="jdbc/postgres"
+                оттуда берутся параметры подключения к БД.
+                */
                 connection = db.getConnection("java:/comp/env/jdbc/postgres");
         } catch (Exception e) {
             e.printStackTrace();
@@ -35,22 +40,12 @@ public class MainServlet extends HttpServlet {
     /* ------------------------------------------------------------------------------------------------------------- */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        /*
-
-        DBController db = new DBController();
-        ResultSet rs = null;
-
-        if(db.isConnected()) {
-
-           rs = db.execQuery("select * from myTable");
-           request.setAttribute("result", rs);
-           RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/mypage.jsp");
-           dispatcher.forward(request, response);
-
+        if(connection != null){
+            rs = db.getResultSet(connection, "select * from myTable");
+            request.setAttribute("result", rs);
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/mypage.jsp");
+            dispatcher.forward(request, response);
         }
-        */
-
     }
 
     /* ------------------------------------------------------------------------------------------------------------- */
